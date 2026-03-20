@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ══════════════════════════════════════════════════
+     SEO & BASIC META
+══════════════════════════════════════════════════ -->
+<title>Almanca Seviyem: {{LEVEL}} ({{LEVEL_NAME}}) — {{SCORE}}/{{TOTAL}} | AlmancaPratik</title>
+<meta name="description"
+  content="Almanca seviye testinde {{SCORE}}/{{TOTAL}} puan aldım, seviyem {{LEVEL}} ({{LEVEL_NAME}}). Sen de ücretsiz Almanca seviye testini çöz ve kaçıncı seviyede olduğunu öğren!">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="{{PAGE_URL}}">
+
+<!-- ══════════════════════════════════════════════════
+     OPEN GRAPH (Facebook, WhatsApp, LinkedIn, Discord)
+══════════════════════════════════════════════════ -->
+<meta property="og:type"        content="website">
+<meta property="og:url"         content="{{PAGE_URL}}">
+<meta property="og:title"       content="Almanca seviyem {{LEVEL}} — {{SCORE}}/{{TOTAL}} puan aldım! 🎯">
+<meta property="og:description" content="{{MOTIVATIONAL}} Sen de Almanca seviyeni ücretsiz test et!">
+<meta property="og:image"       content="{{OG_IMAGE}}">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type"   content="image/png">
+<meta property="og:image:alt"
+  content="AlmancaPratik — {{LEVEL}} seviyesi, {{SCORE}}/{{TOTAL}} puan">
+<meta property="og:site_name"   content="AlmancaPratik">
+<meta property="og:locale"      content="tr_TR">
+
+<!-- ══════════════════════════════════════════════════
+     TWITTER / X CARD
+══════════════════════════════════════════════════ -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:site"        content="@almancapratik">
+<meta name="twitter:title"       content="Almanca Seviyem: {{LEVEL}} ({{SCORE}}/{{TOTAL}}) 🎯">
+<meta name="twitter:description" content="{{MOTIVATIONAL}} Sen de dene →">
+<meta name="twitter:image"       content="{{OG_IMAGE}}">
+<meta name="twitter:image:alt"
+  content="Almanca seviye testi sonucu: {{LEVEL}}, {{SCORE}}/{{TOTAL}}">
+
+<!-- ══════════════════════════════════════════════════
+     SCHEMA.ORG — makes Google show a rich result
+══════════════════════════════════════════════════ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TestAction",
+  "name": "Almanca Seviye Testi Sonucu",
+  "description": "{{LEVEL}} ({{LEVEL_NAME}}) seviyesi, {{SCORE}}/{{TOTAL}} doğru cevap",
+  "url": "{{PAGE_URL}}",
+  "image": "{{OG_IMAGE}}",
+  "resultOf": {
+    "@type": "Quiz",
+    "name": "Almanca Seviye Testi",
+    "url": "{{TEST_URL}}",
+    "provider": {
+      "@type": "Organization",
+      "name": "AlmancaPratik",
+      "url": "{{BASE_URL}}"
+    }
+  }
+}
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     FONTS & FAVICON
+══════════════════════════════════════════════════ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="{{BASE_URL}}/favicon.ico" type="image/x-icon">
+
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS (mirrors existing site)
+═══════════════════════════════════════════════════ */
+:root {
+  --bg:      #070709;
+  --surface: rgba(255,255,255,0.035);
+  --surface2:rgba(255,255,255,0.055);
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
+  --text:    #f0eee8;
+  --text-2:  rgba(240,238,232,0.55);
+  --text-3:  rgba(240,238,232,0.32);
+  --gold:    #c9a84c;
+  --gold-l:  #e8c97a;
+  --green:   #22c55e;
+  --red:     #ef4444;
+  --blue:    #60c8f0;
+  --fd: 'Syne', sans-serif;
+  --fb: 'DM Sans', sans-serif;
+  --fm: 'DM Mono', monospace;
+  --tr: 0.2s cubic-bezier(0.4,0,0.2,1);
+  /* Level colour injected by JS */
+  --lc:      #c9a84c;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--fb);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Background ── */
+.bg { position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden; }
+.bg-grid {
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 100% 80% at 50% 0%,black 10%,transparent 100%);
+}
+.bg-g1 {
+  position:absolute;width:700px;height:700px;top:-200px;left:-100px;
+  border-radius:50%;
+  background:radial-gradient(circle, var(--lc-glow,rgba(201,168,76,0.07)),transparent 65%);
+  filter:blur(80px);
+  animation: drift 16s ease-in-out infinite alternate;
+}
+.bg-g2 {
+  position:absolute;width:500px;height:500px;bottom:-100px;right:-150px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(160,100,255,0.05),transparent 65%);
+  filter:blur(100px);
+  animation: drift 22s ease-in-out infinite alternate-reverse;
+}
+@keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(40px,30px) scale(1.1)} }
+
+/* ── Nav ── */
+.nav {
+  position:fixed;top:0;left:0;right:0;z-index:100;height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;
+  background:rgba(7,7,9,0.88);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);
+}
+.nav-logo { display:flex;align-items:center;gap:9px;text-decoration:none; }
+.nav-logo-mark {
+  width:32px;height:32px;border-radius:9px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-l));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 18px rgba(201,168,76,0.3);
+}
+.nav-logo-mark svg { width:16px;height:16px; }
+.nav-logo-name {
+  font-family:var(--fd);font-size:15px;font-weight:800;
+  color:var(--text);letter-spacing:-0.02em;
+}
+.nav-cta {
+  display:flex;align-items:center;gap:6px;
+  padding:7px 18px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-l));
+  border-radius:999px;color:#0a0a0f;
+  font-size:13px;font-weight:700;
+  text-decoration:none;
+  transition:var(--tr);
+}
+.nav-cta:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.4); }
+@media(max-width:480px){.nav{padding:0 16px;} .nav-cta span{display:none;}}
+
+/* ── Page wrapper ── */
+.page {
+  position:relative;z-index:1;
+  max-width:720px;margin:0 auto;
+  padding:100px 24px 80px;
+}
+
+/* ── Entrance animation ── */
+@keyframes fadeUp {
+  from { opacity:0;transform:translateY(20px) }
+  to   { opacity:1;transform:translateY(0) }
+}
+.anim { animation:fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) both; }
+.anim-1 { animation-delay:0.05s }
+.anim-2 { animation-delay:0.12s }
+.anim-3 { animation-delay:0.20s }
+.anim-4 { animation-delay:0.28s }
+.anim-5 { animation-delay:0.36s }
+
+/* ── Hero ── */
+.hero { text-align:center; margin-bottom:36px; }
+
+.level-pill {
+  display:inline-flex;align-items:center;gap:10px;
+  padding:10px 28px;border-radius:999px;
+  font-family:var(--fd);font-size:16px;font-weight:700;
+  margin-bottom:18px;
+}
+
+.level-emoji { font-size:52px;display:block;margin-bottom:14px; }
+@keyframes bounce {
+  0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)}
+}
+.level-emoji { animation:bounce 0.7s ease both 0.3s; }
+
+.result-title {
+  font-family:var(--fd);
+  font-size:clamp(26px,5vw,38px);
+  font-weight:800;letter-spacing:-0.03em;
+  color:var(--text);
+  margin-bottom:10px;
+}
+
+.result-motivational {
+  font-size:15px;line-height:1.7;
+  color:var(--text-2);max-width:480px;
+  margin:0 auto 8px;
+}
+
+.result-date {
+  font-family:var(--fm);font-size:11px;
+  color:var(--text-3);letter-spacing:0.1em;
+  text-transform:uppercase;
+}
+
+/* ── Score ring ── */
+.ring-wrap {
+  width:130px;height:130px;
+  border-radius:50%;border:4px solid var(--border);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  margin:0 auto 32px;position:relative;
+}
+.ring-wrap svg { position:absolute;top:-4px;left:-4px;transform:rotate(-90deg); }
+.ring-num {
+  font-family:var(--fd);font-size:36px;font-weight:800;
+  line-height:1;color:var(--lc);
+}
+.ring-den { font-size:12px;color:var(--text-3);font-family:var(--fm); }
+
+/* ── Stats breakdown ── */
+.stats {
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;margin-bottom:24px;
+}
+@media(max-width:480px){ .stats{grid-template-columns:1fr 1fr;} }
+.stat-card {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:16px 12px;text-align:center;
+}
+.stat-num {
+  font-family:var(--fd);font-size:28px;font-weight:800;
+  line-height:1;display:block;margin-bottom:4px;
+}
+.stat-lbl { font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em; }
+
+/* ── Viral card ── */
+.viral-card {
+  border-radius:14px;padding:20px 24px;
+  margin-bottom:24px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  display:flex;align-items:center;gap:16px;
+}
+.viral-icon { font-size:28px;flex-shrink:0; }
+.viral-body {}
+.viral-headline {
+  font-family:var(--fd);font-size:14px;font-weight:700;
+  color:var(--text);margin-bottom:4px;
+}
+.viral-sub { font-size:13px;color:var(--text-2);line-height:1.5; }
+.viral-sub strong { color:var(--lc); }
+@media(max-width:480px){ .viral-card{flex-direction:column;gap:10px;text-align:center;} }
+
+/* ── Level description ── */
+.level-card {
+  border-radius:14px;padding:22px 24px;
+  margin-bottom:24px;border:1px solid var(--border);
+}
+.level-card-title {
+  font-family:var(--fd);font-size:12px;font-weight:700;
+  letter-spacing:0.08em;text-transform:uppercase;
+  margin-bottom:8px;opacity:0.65;
+  color:var(--lc);
+}
+.level-card-text {
+  font-size:14px;line-height:1.8;color:var(--text-2);
+}
+
+/* ── Share section ── */
+.share-section { margin-bottom:28px; }
+.share-label {
+  font-family:var(--fm);font-size:10px;font-weight:600;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:12px;
+}
+.share-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+@media(max-width:380px){ .share-grid{grid-template-columns:1fr;} }
+
+.share-btn {
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  padding:12px 16px;border-radius:10px;
+  font-family:var(--fb);font-size:13.5px;font-weight:600;
+  cursor:pointer;border:none;text-decoration:none;
+  transition:var(--tr);
+}
+.share-btn svg,.share-btn img { width:17px;height:17px;flex-shrink:0; }
+
+.share-btn--wa {
+  background:#25D366;color:#fff;
+  box-shadow:0 4px 16px rgba(37,211,102,0.3);
+}
+.share-btn--wa:hover { background:#22c25e;transform:translateY(-1px); }
+
+.share-btn--tw {
+  background:#000;color:#fff;border:1px solid rgba(255,255,255,0.12);
+  box-shadow:0 4px 16px rgba(0,0,0,0.4);
+}
+.share-btn--tw:hover { background:#111;transform:translateY(-1px); }
+
+.share-btn--copy {
+  background:var(--surface2);color:var(--text-2);
+  border:1px solid var(--border);
+}
+.share-btn--copy:hover { border-color:var(--border2);color:var(--text);transform:translateY(-1px); }
+.share-btn--copy.copied { border-color:rgba(34,197,94,0.4);color:var(--green); }
+
+.share-btn--native {
+  background:linear-gradient(135deg,var(--gold),var(--gold-l));
+  color:#0a0a0f;
+  box-shadow:0 4px 16px rgba(201,168,76,0.35);
+}
+.share-btn--native:hover { transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,0.45); }
+
+/* ── CTA buttons ── */
+.cta-row {
+  display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;
+}
+.btn-primary {
+  flex:1;min-width:140px;padding:13px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-l));
+  color:#0a0a0f;font-family:var(--fd);font-size:14px;font-weight:700;
+  border:none;border-radius:10px;cursor:pointer;text-decoration:none;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:var(--tr);
+}
+.btn-primary:hover { transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.4); }
+.btn-secondary {
+  flex:1;min-width:140px;padding:13px;
+  background:var(--surface);color:var(--text-2);
+  font-family:var(--fd);font-size:14px;font-weight:600;
+  border:1px solid var(--border);border-radius:10px;
+  cursor:pointer;text-decoration:none;
+  display:flex;align-items:center;justify-content:center;
+  transition:var(--tr);
+}
+.btn-secondary:hover { border-color:var(--border2);color:var(--text); }
+
+/* ── Snackbar ── */
+#snackbar {
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);
+  color:var(--green);padding:10px 22px;border-radius:999px;
+  font-size:13px;font-weight:600;font-family:var(--fb);
+  z-index:9999;pointer-events:none;
+  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.3s;
+  opacity:0;white-space:nowrap;
+}
+#snackbar.show { transform:translateX(-50%) translateY(0);opacity:1; }
+
+@media(max-width:480px){
+  .page { padding: 82px 16px 60px; }
+  .result-title { font-size:clamp(22px,8vw,32px); }
+}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-g1"></div>
+  <div class="bg-g2"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="{{BASE_URL}}/" aria-label="AlmancaPratik ana sayfa">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0f" stroke-width="2.5"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <span class="nav-logo-name">AlmancaPratik</span>
+  </a>
+  <a class="nav-cta" href="{{TEST_URL}}">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="5 3 19 12 5 21 5 3"/>
+    </svg>
+    <span>Testi Çöz</span>
+  </a>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="anim anim-1">
+      <div class="level-emoji" id="js-emoji" aria-hidden="true">🎉</div>
+    </div>
+
+    <div class="anim anim-1">
+      <div class="level-pill" id="js-pill">{{LEVEL}}</div>
+    </div>
+
+    <h1 class="result-title anim anim-2">{{LEVEL_NAME}} Seviyesi</h1>
+    <p class="result-motivational anim anim-2">{{MOTIVATIONAL}}</p>
+    <p class="result-date anim anim-2">{{DATE}} tarihinde çözüldü</p>
+  </div>
+
+  <!-- Score ring -->
+  <div class="ring-wrap anim anim-2">
+    <svg width="138" height="138" id="ring-svg">
+      <circle cx="69" cy="69" r="60" fill="none"
+              stroke="rgba(255,255,255,0.05)" stroke-width="7"/>
+      <circle cx="69" cy="69" r="60" fill="none"
+              stroke-width="7"
+              stroke-dasharray="376.99"
+              stroke-dashoffset="376.99"
+              stroke-linecap="round"
+              id="ring-circle"
+              style="transition:stroke-dashoffset 1.1s cubic-bezier(0.4,0,0.2,1) 0.4s"/>
+    </svg>
+    <div class="ring-num" id="js-score">{{SCORE}}</div>
+    <div class="ring-den">/ {{TOTAL}}</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats anim anim-3">
+    <div class="stat-card">
+      <span class="stat-num" id="js-correct"
+            style="color:var(--green)">{{SCORE}}</span>
+      <span class="stat-lbl">Doğru</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num"
+            style="color:var(--red)"
+            id="js-wrong">0</span>
+      <span class="stat-lbl">Yanlış</span>
+    </div>
+    <div class="stat-card" id="js-pct-card">
+      <span class="stat-num" id="js-pct"
+            style="color:var(--lc)">{{PCT}}%</span>
+      <span class="stat-lbl">Başarı</span>
+    </div>
+  </div>
+
+  <!-- Viral card -->
+  <div class="viral-card anim anim-3" id="js-viral">
+    <div class="viral-icon">📊</div>
+    <div class="viral-body">
+      <div class="viral-headline">Nasıl sıralanıyorsun?</div>
+      <div class="viral-sub">
+        Test çözenlerin yaklaşık <strong>%{{LEVEL_PCT}}</strong>'i
+        <strong>{{LEVEL}}</strong> seviyesine ulaşıyor.
+        Arkadaşlarını da davet et, sen nerede kalıyorsun?
+      </div>
+    </div>
+  </div>
+
+  <!-- Level description -->
+  <div class="level-card anim anim-3" id="js-lvcard">
+    <div class="level-card-title">{{LEVEL}} — {{LEVEL_NAME}}</div>
+    <p class="level-card-text" id="js-lvdesc">Seviye açıklaması yükleniyor…</p>
+  </div>
+
+  <!-- Share buttons -->
+  <div class="share-section anim anim-4">
+    <div class="share-label">Sonucunu paylaş</div>
+    <div class="share-grid">
+
+      <!-- WhatsApp -->
+      <a class="share-btn share-btn--wa" id="btn-wa" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        WhatsApp
+      </a>
+
+      <!-- Twitter / X -->
+      <a class="share-btn share-btn--tw" id="btn-tw" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        Twitter / X
+      </a>
+
+      <!-- Copy link -->
+      <button class="share-btn share-btn--copy" id="btn-copy" onclick="copyLink()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        Linki Kopyala
+      </button>
+
+      <!-- Native share / fallback -->
+      <button class="share-btn share-btn--native" id="btn-native" onclick="nativeShare()" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        Paylaş
+      </button>
+
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-row anim anim-5">
+    <a class="btn-primary" href="{{TEST_URL}}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+      </svg>
+      Testi Sen de Çöz
+    </a>
+    <a class="btn-secondary" href="{{BASE_URL}}/anasayfa/">
+      Almanca Pratik Yap
+    </a>
+  </div>
+
+</div>
+
+<!-- Snackbar -->
+<div id="snackbar">✓ Link kopyalandı!</div>
+
+<!-- ══════════════════════════════════════════════════
+     CLIENT-SIDE SCRIPT
+══════════════════════════════════════════════════ -->
+<script>
+(function () {
+  // ── Data injected by server ──
+  const DATA = {
+    level:     '{{LEVEL}}',
+    levelName: '{{LEVEL_NAME}}',
+    score:     parseInt('{{SCORE}}', 10),
+    total:     parseInt('{{TOTAL}}', 10),
+    pct:       parseFloat('{{PCT}}'),
+    levelPct:  parseFloat('{{LEVEL_PCT}}'),
+    pageUrl:   '{{PAGE_URL}}',
+    shareText: decodeURIComponent('{{SHARE_TEXT}}'),
+};
+
+  // ── Level config ──
+  const LEVEL_CFG = {
+    A1: { color:'#22c55e', emoji:'🌱',
+          desc:'Almancaya yeni başlıyorsun. Temel kelimeler ve basit cümleler kurabilirsin. Düzenli pratikle kısa sürede ilerleyebilirsin.' },
+    A2: { color:'#4ade80', emoji:'📗',
+          desc:'Günlük hayatta basit iletişimi sürdürebilirsin. Temel gramer kurallarına hakimsin. Kısa metinler okuyarak ve dinleyerek A2→B1 geçişini hızlandırabilirsin.' },
+    B1: { color:'#60c8f0', emoji:'📘',
+          desc:'Günlük hayatın büyük bölümünde Almancayı kullanabiliyorsun. Haber okumak, seyahat etmek ve iş yerinde temel iletişim kurabilirsin.' },
+    B2: { color:'#818cf8', emoji:'📙',
+          desc:'Karmaşık konularda Almanca anlayabilir ve ifade edebilirsin. Akademik metinleri okuyabilir, tartışmalara katılabilirsin.' },
+    C1: { color:'#c9a84c', emoji:'🏆',
+          desc:'Almancayı akıcı ve etkili kullanabiliyorsun. Akademik veya profesyonel ortamlarda rahatça iletişim kurabilirsin. Tebrikler!' },
+  };
+
+  const cfg = LEVEL_CFG[DATA.level] || LEVEL_CFG.C1;
+
+  // ── Apply level colour to CSS custom property ──
+  document.documentElement.style.setProperty('--lc', cfg.color);
+  const alpha = cfg.color + '12'; // ~7% alpha
+  document.documentElement.style.setProperty('--lc-glow', alpha);
+
+  // ── Level pill ──
+  const pill = document.getElementById('js-pill');
+  if (pill) {
+    pill.style.cssText = `
+      background:${cfg.color}14;
+      border:1px solid ${cfg.color}40;
+      color:${cfg.color};
+    `;
+  }
+
+  // ── Emoji ──
+  const emojiEl = document.getElementById('js-emoji');
+  if (emojiEl) emojiEl.textContent = cfg.emoji;
+
+  // ── Wrong count ──
+  const wrongEl = document.getElementById('js-wrong');
+  if (wrongEl) wrongEl.textContent = DATA.total - DATA.score;
+
+  // ── Level description ──
+  const descEl = document.getElementById('js-lvdesc');
+  if (descEl) descEl.textContent = cfg.desc;
+
+  // ── Level card border ──
+  const lvCard = document.getElementById('js-lvcard');
+  if (lvCard) {
+    lvCard.style.background = cfg.color + '0a';
+    lvCard.style.borderColor = cfg.color + '28';
+  }
+
+  // ── Animate score ring ──
+  const circle = document.getElementById('ring-circle');
+  if (circle) {
+    const circumference = 2 * Math.PI * 60; // r=60
+    circle.style.stroke = cfg.color;
+    setTimeout(() => {
+      circle.style.strokeDashoffset = circumference * (1 - DATA.pct / 100);
+    }, 100);
+  }
+
+  // ── Build share URLs ──
+  const wa = `https://wa.me/?text=${encodeURIComponent(DATA.shareText + '\n' + DATA.pageUrl)}`;
+  const tw = `https://twitter.com/intent/tweet?text=${encodeURIComponent(DATA.shareText)}&url=${encodeURIComponent(DATA.pageUrl)}`;
+
+  const waBtn = document.getElementById('btn-wa');
+  const twBtn = document.getElementById('btn-tw');
+  if (waBtn) waBtn.href = wa;
+  if (twBtn) twBtn.href = tw;
+
+  // ── Native share button ──
+  if (navigator.share) {
+    const nb = document.getElementById('btn-native');
+    if (nb) nb.style.display = 'flex';
+  }
+
+  // ── Expose globals for inline handlers ──
+  window.copyLink = function () {
+    navigator.clipboard.writeText(DATA.pageUrl).then(() => {
+      const btn = document.getElementById('btn-copy');
+      if (btn) { btn.classList.add('copied'); btn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" width="17" height="17">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Kopyalandı!`; }
+      showSnackbar();
+      setTimeout(() => {
+        if (btn) {
+          btn.classList.remove('copied');
+          btn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" width="17" height="17">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Linki Kopyala`;
+        }
+      }, 2500);
+    }).catch(() => {
+      // Fallback for older browsers
+      const inp = document.createElement('input');
+      inp.value = DATA.pageUrl;
+      document.body.appendChild(inp);
+      inp.select();
+      document.execCommand('copy');
+      document.body.removeChild(inp);
+      showSnackbar();
+    });
+  };
+
+  window.nativeShare = function () {
+    if (!navigator.share) return;
+    navigator.share({
+      title: `Almanca Seviyem: ${DATA.level}`,
+      text: DATA.shareText,
+      url: DATA.pageUrl,
+    }).catch(() => {});
+  };
+
+  function showSnackbar() {
+    const s = document.getElementById('snackbar');
+    if (!s) return;
+    s.classList.add('show');
+    setTimeout(() => s.classList.remove('show'), 2500);
+  }
+})();
+</script>
+
+</body>
+</html>
