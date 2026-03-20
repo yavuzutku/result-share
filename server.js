@@ -22,7 +22,7 @@ app.use(helmet({
   contentSecurityPolicy: false,   // result pages load external fonts
   crossOriginResourcePolicy: { policy: 'cross-origin' }, // OG images served to crawlers
 }));
-
+app.options('*', cors());
 app.use(cors({
   origin: function (origin, callback) {
     // Origin yoksa (curl, Postman, server-to-server) geçir
