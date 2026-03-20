@@ -24,8 +24,19 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: ALLOWED_ORIGINS.includes('*') ? '*' : ALLOWED_ORIGINS,
-  methods: ['GET', 'POST'],
+  origin: function (origin, callback) {
+    // Origin yoksa (curl, Postman, server-to-server) geçir
+    if (!origin) return callback(null, true);
+    const allowed = (process.env.ALLOWED_ORIGINS || '*');
+    if (allowed === '*' || allowed.split(',').map(s => s.trim()).includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS: not allowed → ' + origin));
+    }
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+  optionsSuccessStatus: 200   // IE11 için
 }));
 
 app.use(express.json({ limit: '50kb' }));
